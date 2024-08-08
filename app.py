@@ -23,7 +23,7 @@ class Location(db.Model):
 with app.app_context():
     db.create_all()
 
-API_KEY = 'c77690cb8dd25163052f75f4218e70c5'
+API_KEY = 'API_KEY'
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
