@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WeatherTracker</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Your custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="{{ url_for('index') }}">WeatherTracker</a>
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <span class="navbar-text" id="datetime"></span>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer bg-dark text-white text-center py-3">
+        <p class="mb-0">Copyright © {{ current_year }} WeatherTracker. Made by Abinash Jegatheeswaran.</p>
+    </footer>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function updateTimeBasedStyles() {
+            const now = new Date();
+            const hours = now.getHours();
+            let timeOfDay = 'day';
+
+            if (hours >= 6 && hours < 12) {
+                timeOfDay = 'morning';
+            } else if (hours >= 12 && hours < 18) {
+                timeOfDay = 'afternoon';
+            } else if (hours >= 18 && hours < 21) {
+                timeOfDay = 'evening';
+            } else {
+                timeOfDay = 'night';
+            }
+
+            document.body.className = timeOfDay;
+            document.querySelector('.navbar').className = `navbar navbar-expand-lg navbar-dark bg-dark ${timeOfDay}`;
+        }
+
+        function updateDateTime() {
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', timeZone: 'America/New_York', timeZoneName: 'short' };
+            const now = new Date().toLocaleString('en-US', options);
+            document.getElementById('datetime').textContent = now;
+        }
+
+        setInterval(updateDateTime, 1000);
+        updateDateTime(); // Initial call
+
+        updateTimeBasedStyles();
+        setInterval(updateTimeBasedStyles, 60000); // Update every minute
+
+        // Set the current year in the footer
+        document.querySelector('.footer p').innerHTML = `© ${new Date().getFullYear()} WeatherTracker. Made by Abinash Jegatheeswaran.`;
+    </script>
+</body>
+</html>
+
+
+

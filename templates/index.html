@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1 class="mt-5">WeatherTracker</h1>
+<form id="location-form">
+    <div class="form-group">
+        <label for="city">City</label>
+        <input type="text" class="form-control" id="city" name="city" placeholder="Enter city name" required>
+    </div>
+    <div class="form-group">
+        <label for="country">Country Code</label>
+        <input type="text" class="form-control" id="country" name="country" placeholder="Enter country code (e.g. CA, US, GB)" required>
+        <button type="button" class="btn btn-link" data-toggle="modal" data-target="#countryCodesModal">View Country Codes</button>
+    </div>
+    <button type="submit" class="btn btn-primary">Add Location</button>
+</form>
+<hr>
+<h2 class="mt-4">Weather Information</h2>
+<div class="row">
+    {% for weather in weather_data %}
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <a href="{{ url_for('location_detail', city=weather.city|replace(' ', '_'), country_code=weather.country_code if weather.country_code else '' ) }}">
+                        {{ weather.city }}{% if weather.country_code %}, {{ weather.country_code }}{% endif %}
+                    </a>
+                </h5>
+                <p class="card-text">Temperature: {{ weather.temperature }} °C / {{ weather.temperature_f }} °F</p>
+                <p class="card-text">Feels Like: {{ weather.feels_like }} °C / {{ weather.feels_like_f }} °F</p>
+                <p class="card-text">Description: {{ weather.description }}</p>
+                <p class="card-text">Humidity: {{ weather.humidity }}%</p>
+                <p class="card-text">Wind Speed: {{ weather.wind_speed }} m/s</p>
+                <p class="card-text">Sunrise: {{ weather.sunrise }} (EST)</p>
+                <p class="card-text">Sunset: {{ weather.sunset }} (EST)</p>
+                <p class="card-text">Precipitation Chance: {{ weather.precipitation_chance }}%</p>
+                <img src="http://openweathermap.org/img/w/{{ weather.icon }}.png" alt="{{ weather.description }}">
+                <form method="post" action="{{ url_for('delete_location') }}" class="mt-2">
+                    <input type="hidden" name="city" value="{{ weather.city }}">
+                    <input type="hidden" name="country_code" value="{{ weather.country_code }}">
+                    <button type="submit" class="btn btn-danger">Delete Location</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="modal fade" id="countryCodesModal" tabindex="-1" aria-labelledby="countryCodesModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="countryCodesModalLabel">Country Codes</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>For a complete list of country codes, visit <a href="https://countrycode.org/" target="_blank">this website</a>. (Codes listed under ISO Codes).</p>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th scope="col">Country</th>
+                            <th scope="col">Code</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Canada</td><td>CA</td></tr>
+                        <tr><td>United States</td><td>US</td></tr>
+                        <tr><td>United Kingdom</td><td>GB</td></tr>
+                        <tr><td>Germany</td><td>DE</td></tr>
+                        <tr><td>France</td><td>FR</td></tr>
+                        <tr><td>China</td><td>CN</td></tr>
+                        <tr><td>India</td><td>IN</td></tr>
+                        <tr><td>Japan</td><td>JP</td></tr>
+                        <tr><td>Italy</td><td>IT</td></tr>
+                        <tr><td>Australia</td><td>AU</td></tr>
+                        <tr><td>Mexico</td><td>MX</td></tr>
+                        <tr><td>Spain</td><td>ES</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+<script>
+$(document).ready(function() {
+    function capitalizeWords(str) {
+        return str.replace(/\b\w/g, function(char) {
+            return char.toUpperCase();
+        });
+    }
+
+    $('#location-form').on('submit', function(event) {
+        event.preventDefault();
+        
+        var cityInput = $('#city');
+        var countryInput = $('#country');
+
+        // Capitalize the first letter of each word in the city and country fields
+        cityInput.val(capitalizeWords(cityInput.val()));
+        countryInput.val(countryInput.val().toUpperCase());
+
+        var formData = $(this).serialize();
+        
+        $.ajax({
+            type: 'POST',
+            url: '/',
+            data: formData,
+            dataType: 'json',
+            success: function(response) {
+                if (response.status === 'error') {
+                    alert(response.message);
+                } else {
+                    alert(response.message);
+                    location.reload(); 
+                }
+            },
+            error: function() {
+                alert('An error occurred. Please try again.');
+            }
+        });
+    });
+
+});
+</script>
+{% endblock %}
+

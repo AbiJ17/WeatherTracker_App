@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1 class="mt-5">{{ weather.city }}{% if weather.country_code %}, {{ weather.country_code }}{% endif %}</h1>
+
+<a href="{{ url_for('index') }}" class="btn btn-secondary mb-3">Back to Home</a>
+
+<h2>Current Weather</h2>
+<div class="card mb-4">
+    <div class="card-body">
+        <h5 class="card-title">{{ weather.city }}</h5>
+        <p class="card-text">Temperature: {{ weather.temperature }} °C / {{ weather.temperature_f }} °F</p>
+        <p class="card-text">Feels Like: {{ weather.feels_like }} °C / {{ weather.feels_like_f }} °F</p>
+        <p class="card-text">Description: {{ weather.description }}</p>
+        <p class="card-text">Humidity: {{ weather.humidity }}%</p>
+        <p class="card-text">Wind Speed: {{ weather.wind_speed }} m/s</p>
+        <p class="card-text">Sunrise: {{ weather.sunrise }}</p>
+        <p class="card-text">Sunset: {{ weather.sunset }}</p>
+        <p class="card-text">Precipitation Chance: {{ weather.precipitation_chance }} mm</p>
+        <img src="http://openweathermap.org/img/w/{{ weather.icon }}.png" alt="{{ weather.description }}">
+    </div>
+</div>
+
+<h2>Hourly Forecast</h2>
+<div class="row">
+    {% if hourly_forecast %}
+        {% for hour in hourly_forecast %}
+        <div class="col-md-2">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">{{ hour.time }}</h5>
+                    <p class="card-text">Temperature: {{ hour.temperature }} °C / {{ hour.temperature_f }} °F</p>
+                    <p class="card-text">Feels Like: {{ hour.feels_like }} °C / {{ hour.feels_like_f }} °F</p>
+                    <p class="card-text">Description: {{ hour.description }}</p>
+                    <p class="card-text">Humidity: {{ hour.humidity }}%</p>
+                    <p class="card-text">Wind Speed: {{ hour.wind_speed }} m/s</p>
+                    <p class="card-text">Precipitation Chance: {{ hour.precipitation_chance }} mm</p>
+                    <img src="http://openweathermap.org/img/w/{{ hour.icon }}.png" alt="{{ hour.description }}">
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <p>No hourly forecast data available.</p>
+    {% endif %}
+</div>
+
+<h2>3-Day Forecast</h2>
+<div class="row">
+    {% if three_hour_forecast %}
+        {% for day in three_hour_forecast %}
+        <div class="col-md-4 mb-4">
+            <h5 class="day-title">{{ day.date }}</h5>
+            {% for forecast in day.forecasts %}
+            <div class="card mb-2 forecast-card">
+                <div class="card-body">
+                    <h6 class="forecast-time">{{ forecast.time }}</h6>
+                    <p class="card-text">Temperature: {{ forecast.temperature }} °C / {{ forecast.temperature_f }} °F</p>
+                    <p class="card-text">Feels Like: {{ forecast.feels_like }} °C / {{ forecast.feels_like_f }} °F</p>
+                    <p class="card-text">Description: {{ forecast.description }}</p>
+                    <p class="card-text">Humidity: {{ forecast.humidity }}%</p>
+                    <p class="card-text">Wind Speed: {{ forecast.wind_speed }} m/s</p>
+                    <p class="card-text">Precipitation Chance: {{ forecast.precipitation_chance }} mm</p>
+                    <img src="http://openweathermap.org/img/w/{{ forecast.icon }}.png" alt="{{ forecast.description }}">
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endfor %}
+    {% else %}
+        <p>No 3-hour forecast data available.</p>
+    {% endif %}
+</div>
+
+{% endblock %}
