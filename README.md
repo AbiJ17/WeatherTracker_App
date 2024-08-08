@@ -32,6 +32,8 @@ Make sure you have the following installed on your system:
 
 1. Clone the Repository
 2. Install Required Package: 'pip install Flask'
-3. Run app.py to initialize the database
-4. Open a web browser and go to: 'http://127.0.0.1:5000/'
+3. Go to OpenWeatherMap and sign up for a free account. After signing up, navigate to the API Keys section in your account settings and generate a new API key. 
+4. Add the API key in app.py (line 26)
+5. Run app.py to initialize the database
+6. Open a web browser and go to: 'http://127.0.0.1:5000/'
 
